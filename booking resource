@@ -1,0 +1,16 @@
+function bookResource(){
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('booking');
+  const rows = sheet.getDataRange().getValues();
+  rows.forEach((row,index)=>{
+    if(index===0||row[5] === 'Booked') return;
+    const calendar = CalendarApp.getDefaultCalendar();
+    const startTime = new Date(row[2]);
+    const endTime = new Date(row[3]);
+    const events = calendar.getEvents(startTime,endTime);
+    if(events.length === 0){
+      calendar.createEvent(row[1],startTime,endTime);
+      sheet.getRange(index+1,6).setValue('Booked');
+      MailApp.sendEmail(row[4],'Booking Confirmation','Your booking is confirmed for '+row[1]);
+    }
+  })
+}
