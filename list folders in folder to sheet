@@ -1,0 +1,15 @@
+function listFoldersInMainFolder() {
+  const mainFolderId = 'YOUR_MAIN_FOLDER_ID_HERE'; // Replace this with your main folder's ID
+  const folder = DriveApp.getFolderById(mainFolderId);
+  const subFolders = folder.getFolders();
+  
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.appendRow(['Folder Name', 'Folder ID']); // Header row
+  
+  while (subFolders.hasNext()) {
+    const subFolder = subFolders.next();
+    const name = subFolder.getName();
+    const id = subFolder.getId();
+    sheet.appendRow([name, id]);
+  }
+}
