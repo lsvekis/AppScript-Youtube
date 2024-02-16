@@ -1,0 +1,27 @@
+function sendCustomEmails(){
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('exer1');
+  const startRow = 2;
+  const numRows = sheet.getLastRow()-1;
+  const dataRange = sheet.getRange(startRow,1,numRows,3);
+  const data = dataRange.getValues();
+  data.forEach((row,index)=>{
+    const emailAddress = row[0];
+    const emailSent = row[2];
+    const rowValue = index+2;
+    if(emailSent !== 'Email Sent'){
+      const message = createHTMLEmail(row[1]);
+      const subject = 'Your custom email';
+      const options = {to:emailAddress,subject:subject,htmlBody:message};
+      MailApp.sendEmail(options);
+      sheet.getRange(rowValue,3).setValue('Email Sent');
+      SpreadsheetApp.flush();
+    }
+  })
+}
+
+function createHTMLEmail(name){
+  const temp = HtmlService.createTemplateFromFile('emailTemplate');
+  temp.name = name;
+  return temp.evaluate().getContent();
+}
