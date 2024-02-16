@@ -1,0 +1,24 @@
+function generateMonthlyExpenseReport(){
+  const sName = 'Expenses';
+  const ss= SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(sName);
+  const range = sheet.getDataRange();
+  const values = range.getValues().slice(1);
+  const categories = {};
+  values.forEach((row)=>{
+    const category = row[1];
+    const amount = row[2];
+    if(categories[category]){
+      categories[category] += amount;
+    }else{
+      categories[category] = amount;
+    }
+  })
+  const reportSheetName = 'Expense Report '+Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'MMMM yyyy');
+  const reportSheet = ss.getSheetByName(reportSheetName) || ss.insertSheet(reportSheetName);
+  reportSheet.clear();
+  reportSheet.appendRow(['Catgegory','Total']);
+  Object.keys(categories).forEach((category)=>{
+    reportSheet.appendRow([category,categories[category]]);
+  })
+}
