@@ -1,0 +1,18 @@
+function generateDocuments() {
+  const folderID = '1-1beDsQ7Gfqlu1ChBCVxGkRiePKHOoyu';
+  const folder = DriveApp.getFolderById(folderID);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('docs');
+  const rows = sheet.getDataRange().getValues();
+  rows.forEach((row,index)=>{
+    if(index === 0 ) return;
+    const doc = DocumentApp.create(row[0] + 'Document');
+    const body = doc.getBody();
+    body.appendParagraph('This is the contents '+row[1]);
+    const id = doc.getId();
+    const file = DriveApp.getFileById(id);
+    file.moveTo(folder);
+    const range = sheet.getRange(index+1,3);
+    range.setValue(id);
+  })
+}
