@@ -1,0 +1,22 @@
+function appendMyRow(){
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const rowData = ['New','Laurence','Svekis'];
+  sheet.appendRow(rowData);
+  //Logger.log(sheet.getName());
+}
+function writeSpreadsheetData(){
+  const val = 'Laurence Svekis';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  // const sheet = ss.getActiveSheet();
+  const sheet = ss.getSheets()[0];
+  Logger.log(sheet.getName());
+  const range = sheet.getRange('B1');
+  range.setValue(val);
+}
+function readSpreadsheetData() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const sheet = ss.getSheetByName('Sheet1');
+  const range = sheet.getRange('A1');
+  const value = range.getValue();
+  Logger.log(value);
+}
