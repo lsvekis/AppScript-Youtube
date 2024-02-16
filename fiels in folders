@@ -1,0 +1,25 @@
+function listAllFilesAndFolders() {
+  var parentFolderId = 'YOUR_PARENT_FOLDER_ID_HERE'; // Replace this with your parent folder's ID
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.clear(); // Clear existing content
+  sheet.appendRow(['File Name', 'File ID', 'MIME Type', 'Parent Folder']); // Create header row
+  
+  var parentFolder = DriveApp.getFolderById(parentFolderId);
+  var queue = [{folder: parentFolder, parentName: ""}]; // Initialize queue for breadth-first search
+  
+  while (queue.length > 0) {
+    var current = queue.shift(); // Get the first item in the queue
+    var files = current.folder.getFiles();
+    
+    while (files.hasNext()) {
+      var file = files.next();
+      sheet.appendRow([file.getName(), file.getId(), file.getMimeType(), current.folder.getName()]);
+    }
+    
+    var subFolders = current.folder.getFolders();
+    while (subFolders.hasNext()) {
+      var subFolder = subFolders.next();
+      queue.push({folder: subFolder, parentName: current.folder.getName()}); // Add subfolders to queue
+    }
+  }
+}
