@@ -1,0 +1,25 @@
+function sendDailyTaskSummary(){
+  const sheetName = 'tasks';
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  const range = sheet.getDataRange();
+  const data = range.getValues();
+  const values = data.slice(1);
+  Logger.log(data);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const tasksDueToday = values.filter((row)=>{
+    const dueDate = new Date(row[1]);
+    dueDate.setHours(0,0,0,0);
+    return dueDate.valueOf() === today.valueOf() && row[2] === 'Pending';
+  })
+  if(tasksDueToday.length >0 ){
+    const email = Session.getActiveUser().getEmail();
+    let messageBody = 'Tasks Due Today;\n\n';
+    tasksDueToday.forEach((task)=>{
+      messageBody += `${task[0]}\n`;
+    })
+    const subject = 'Daily Tasks Summary';
+    MailApp.sendEmail(email,subject,messageBody);
+  }
+  Logger.log(tasksDueToday);
+}
