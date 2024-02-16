@@ -1,0 +1,28 @@
+function analyzeSalesData(){
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Sheet1');
+  const dataRange = sheet.getDataRange();
+  const data = dataRange.getValues();
+  let totalSales = 0;
+  let itemCount = 0;
+  const salesData = [];
+  for(let i=1;i<data.length;i++){
+    const quantity = data[i][1];
+    const price = parseFloat(data[i][2].toString().replace('$',''));
+    const sales = quantity * price;
+    totalSales+=sales;
+    itemCount+=quantity;
+    salesData.push([data[i][0],sales]);
+  }
+  const aveSalesPerItem = totalSales/data.length-1;
+  const bestSeller = salesData.reduce((max,item)=> item[1]>max[1] ? item :max)[0];
+  let summarySheet = ss.getSheetByName('Summary');
+  if(!summarySheet){
+    summarySheet = ss.insertSheet('Summary');
+  }else{
+    summarySheet.clear();
+  }
+  summarySheet.appendRow(['Total Sales',`$${totalSales.toFixed(2)}`]);
+  summarySheet.appendRow(['Average Sales per item',`$${aveSalesPerItem.toFixed(2)}`]);
+  summarySheet.appendRow(['Best Selling Item',bestSeller]);
+}
