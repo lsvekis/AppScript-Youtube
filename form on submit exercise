@@ -1,0 +1,22 @@
+function setupTrigger(){
+  ScriptApp.newTrigger('onFormSubmit')
+  .forSpreadsheet(SpreadsheetApp.getActive())
+  .onFormSubmit()
+  .create();
+}
+function onFormSubmit(e){
+  const responses = e.values;
+  const email = responses[1];
+  const subject = 'New entry';
+  let message = 'Thank you \n\n Your form is received\n\n';
+  const form = FormApp.openByUrl('https://docs.google.com/forms/d/1pWyyHXyz9EREPxLOu_YsKgvkptP8u9kPcSvlQDQ2jLs/edit');
+  const items = form.getItems();
+  for (var i = 0; i < items.length; i++) {
+    message += items[i].getTitle() + ": " + responses[i + 2] + "\n";
+  }
+  MailApp.sendEmail(email,subject,message);
+
+  const ss = SpreadsheetApp.openById('1ZXFyGGiYunNmqfJKF5CaaKvBX52MVTkbD1ApaWnvtjk');
+  const sheet = ss.getSheetByName('track');
+  sheet.appendRow(responses);
+}
